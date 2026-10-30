@@ -51,13 +51,65 @@ window.addEventListener('scroll', () => {
 
 
 const projectModal        = document.getElementById('projectModal');
-const projectModalImg     = document.getElementById('projectModalImg');
-const projectModalCaption = document.getElementById('projectModalCaption');
 const projectModalClose   = document.getElementById('projectModalClose');
+const projectGalleryImages = document.getElementById('projectGalleryImages');
+const projectDots         = document.getElementById('projectDots');
+const projectCaption      = document.getElementById('projectModalCaption');
+const projectHint         = document.getElementById('projectHint');
+const projectPrev         = document.getElementById('projectPrev');
+const projectNext         = document.getElementById('projectNext');
 
-function openProjectModal(src, name) {
-  projectModalImg.src = src;
-  projectModalCaption.textContent = name || '';
+let projectImages = [];
+let projectIndex  = 0;
+
+function renderProjectGallery() {
+  projectGalleryImages.innerHTML = '';
+  projectDots.innerHTML = '';
+
+  projectImages.forEach((src, i) => {
+    const img = document.createElement('img');
+    img.className = 'zoom-modal-img';
+    img.src = src;
+    img.alt = `Project image ${i + 1}`;
+    if (i !== projectIndex) img.classList.add('hidden-img');
+    projectGalleryImages.appendChild(img);
+
+    const dot = document.createElement('div');
+    dot.className = 'cert-dot' + (i === projectIndex ? ' active' : '');
+    dot.addEventListener('click', () => { projectIndex = i; updateProjectView(); });
+    projectDots.appendChild(dot);
+  });
+
+  updateProjectView();
+}
+
+function updateProjectView() {
+  const imgs = projectGalleryImages.querySelectorAll('img');
+  const dots = projectDots.querySelectorAll('.cert-dot');
+
+  imgs.forEach((img, i) => {
+    img.classList.toggle('hidden-img', i !== projectIndex);
+  });
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === projectIndex);
+  });
+
+  projectPrev.disabled = projectIndex === 0;
+  projectNext.disabled = projectIndex === projectImages.length - 1;
+
+  if (projectImages.length > 1) {
+    projectHint.textContent = `${projectIndex + 1} / ${projectImages.length}`;
+  } else {
+    projectHint.textContent = '';
+  }
+}
+
+function openProjectModal(card) {
+  projectImages = JSON.parse(card.dataset.images || '[]');
+  const name = card.dataset.name || '';
+  projectIndex = 0;
+  projectCaption.textContent = name;
+  renderProjectGallery();
   projectModal.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
@@ -67,6 +119,8 @@ function closeProjectModal() {
   document.body.style.overflow = '';
 }
 
+projectPrev.addEventListener('click', () => { if (projectIndex > 0) { projectIndex--; updateProjectView(); } });
+projectNext.addEventListener('click', () => { if (projectIndex < projectImages.length - 1) { projectIndex++; updateProjectView(); } });
 projectModalClose.addEventListener('click', closeProjectModal);
 projectModal.addEventListener('click', e => { if (e.target === projectModal) closeProjectModal(); });
 
@@ -181,6 +235,8 @@ document.addEventListener('keydown', e => {
   }
   if (e.key === 'ArrowLeft'  && certModal.classList.contains('active') && certIndex > 0) { certIndex--; updateCertView(); }
   if (e.key === 'ArrowRight' && certModal.classList.contains('active') && certIndex < certImages.length - 1) { certIndex++; updateCertView(); }
+  if (e.key === 'ArrowLeft'  && projectModal.classList.contains('active') && projectIndex > 0) { projectIndex--; updateProjectView(); }
+  if (e.key === 'ArrowRight' && projectModal.classList.contains('active') && projectIndex < projectImages.length - 1) { projectIndex++; updateProjectView(); }
 });
 
 
@@ -267,6 +323,31 @@ function toggleDescription(btn) {
     }, 15000);
   }
 }
+
+
+
+
+
+document.querySelectorAll('.projectimage').forEach(container => {
+  const gifImg = container.querySelector('.gif-img');
+  if (gifImg) {
+    const originalSrc = gifImg.src;
+    
+    container.addEventListener('mouseenter', () => {
+      gifImg.src = '';
+      gifImg.src = originalSrc;
+    });
+  } 
+});
+
+
+
+
+
+
+
+
+
 
 
 

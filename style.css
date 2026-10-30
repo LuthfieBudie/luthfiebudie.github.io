@@ -460,6 +460,42 @@ section h2 {
 }
 .projectitem:hover { transform: translateY(-4px); box-shadow: 0 10px 40px rgba(0,0,0,0.13); }
 .projectimage { position: relative; height: 200px; overflow: hidden; cursor: pointer; }
+.projectimage .static-img, .projectimage .gif-img{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.35s ease-in-out, transform 0.4s ease-in-out;
+}
+.projectimage .static-img{
+  opacity: 1;
+  z-index: 1;
+}
+.projectimage .gif-img{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+.projectimage:hover .static-img,.projectimage:hover .gif-img{
+  transform: scale(1.07);
+}
+.projectimage:hover .static-img{
+  opacity: 0;
+}
+.projectimage:hover .gif-img{
+  visibility: visible;
+  opacity: 1;
+}
 .projectimage img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
 .projectimage:hover img { transform: scale(1.07); }
 .overlay {
@@ -834,3 +870,28 @@ section h2 {
     }
     .sert-overlay i { color: #fff; font-size: 1.5rem; }
     .sertificatecard:hover .sert-overlay { opacity: 1; }
+
+
+@media screen and (min-width: 769px) {
+  :root {
+    --page-zoom: 0.75;
+  }
+
+  .sidebar {
+    zoom: var(--page-zoom);
+    height: calc(100vh / var(--page-zoom));
+  }
+
+  .content {
+    zoom: var(--page-zoom);
+    min-height: calc(100vh / var(--page-zoom));
+  }
+
+  .box {
+    min-height: calc(100vh / var(--page-zoom));
+  }
+
+  .scrollindicator {
+    left: calc(50vw / var(--page-zoom));
+  }
+}
