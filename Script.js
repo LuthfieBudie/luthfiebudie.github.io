@@ -3,6 +3,7 @@ const sidebar   = document.getElementById('sidebar');
 const overlay   = document.getElementById('sidebarOverlay');
 const navLinks  = document.querySelectorAll('.sidebar a');
 
+
 function openSidebar()  { sidebar.classList.add('open');    overlay.classList.add('active');    hamburger && hamburger.classList.add('open'); }
 function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('active'); hamburger && hamburger.classList.remove('open'); }
 
@@ -256,7 +257,7 @@ document.addEventListener('keydown', e => {
 
 
 const filterButtons = document.querySelectorAll('.filterbtn');
-const projectItems  = document.querySelectorAll('.projectitem');
+const projectItems = document.querySelectorAll('#projects .projectitem');
 
 filterButtons.forEach(btn => {
   btn.addEventListener('click', () => {
@@ -328,16 +329,47 @@ function toggleDescription(btn) {
 
 
 
-document.querySelectorAll('.projectimage').forEach(container => {
-  const gifImg = container.querySelector('.gif-img');
-  if (gifImg) {
-    const originalSrc = gifImg.src;
-    
-    container.addEventListener('mouseenter', () => {
-      gifImg.src = '';
-      gifImg.src = originalSrc;
-    });
-  } 
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.querySelectorAll('.projectimage[data-hover-images]').forEach(container => {
+  const images   = JSON.parse(container.dataset.hoverImages || '[]');
+  const hoverImg = container.querySelector('.gif-img');
+  if (!hoverImg || images.length === 0) return;
+
+  images.forEach(src => { new Image().src = src; }); 
+
+  let index = 0, timer = null;
+
+  container.addEventListener('mouseenter', () => {
+    index = 0;
+    hoverImg.src = images[0];
+    clearInterval(timer);
+    timer = setInterval(() => {
+      index = (index + 1) % images.length;
+      hoverImg.style.opacity = '0';           
+      setTimeout(() => {
+        hoverImg.src = images[index];
+        hoverImg.style.opacity = '';              
+      }, 300);
+    }, 2000);
+  });
+
+  container.addEventListener('mouseleave', () => {
+    clearInterval(timer);
+    timer = null;
+    hoverImg.style.opacity = '';
+  });
 });
 
 
