@@ -257,7 +257,7 @@ document.addEventListener('keydown', e => {
 
 
 const filterButtons = document.querySelectorAll('.filterbtn');
-const projectItems = document.querySelectorAll('#projects .projectitem');
+const projectItems  = document.querySelectorAll('#projects .projectitem');
 
 filterButtons.forEach(btn => {
   btn.addEventListener('click', () => {
@@ -267,8 +267,14 @@ filterButtons.forEach(btn => {
     const filter = btn.dataset.filter;
 
     projectItems.forEach(item => {
-      const match = filter === 'all' || item.dataset.category.includes(filter);
-      item.style.display = match ? '' : 'none';
+      const categories = item.dataset.category.split(' ');
+      const hideInAll  = item.hasAttribute('data-hide-all');
+
+      const match = filter === 'all'
+        ? !hideInAll
+        : categories.includes(filter);
+
+      item.style.display = match ? 'flex' : 'none';
     });
   });
 });
